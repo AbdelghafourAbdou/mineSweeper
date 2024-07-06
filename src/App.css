@@ -1,0 +1,119 @@
+#root {
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+}
+
+.gameContainer {
+  width: inherit;
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.diffContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+}
+.diffContainer p {
+  padding: 0;
+  margin: 0;
+}
+
+.grid {
+  margin-top: 10px;
+  display: grid;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  width: 80vw;
+  min-height: 80vh;
+}
+.easy {
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+.mid {
+  grid-template-columns: repeat(18, 1fr);
+  grid-template-rows: repeat(14, 1fr);
+}
+.hard {
+  grid-template-columns: repeat(24, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+}
+
+.cell {
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clickStopper {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+  position: absolute;
+  overflow: hidden;
+}
+.gameOver {
+  z-index: 99;
+  width: 10%;
+  height: 10%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.retry {
+  background-color: #06252a;
+  border-radius: 5px;
+}
+.retry:hover {
+  background-color: #000000;
+}
+.coloredPlay {
+  filter: invert(58%) sepia(96%) saturate(4471%) hue-rotate(165deg) brightness(100%) contrast(101%);
+  position: relative;
+  top: 2px;
+}
+.retryText {
+  position: relative;
+  top: -0.35em;
+  font-weight: bold;
+}
+
+.flagCell {
+  filter: invert(73%) sepia(44%) saturate(5350%) hue-rotate(157deg) brightness(102%) contrast(101%);
+}
+.flagButton:hover {
+  background-color: #072969;
+}
+
+.bombsNumber {
+  color: #00a4d7;
+}
+
+.musicControl {
+  display: flex;
+  flex-direction: row;
+  gap: 0.2em;
+  white-space: nowrap;
+}
+.musicButton {
+  background-color: transparent;
+}
+.musicButton:hover {
+  background-color: transparent;
+}
+.ostControl {
+  width: 1.5em;
+  height: 1.5em;
+  filter: invert(58%) sepia(96%) saturate(4471%) hue-rotate(165deg) brightness(100%) contrast(101%);
+  position: relative;
+  top: 0.15em;
+}
