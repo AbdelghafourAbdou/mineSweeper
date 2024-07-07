@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
 import { FaBomb } from "react-icons/fa6";
 import Graph from './Graph';
@@ -9,6 +10,11 @@ const flag = '/svg/flag.svg';
 const select = '/sounds/select.wav';
 const cloth = '/sounds/cloth.mp3';
 const music = '/music/piano.mp3';
+const directions = [
+  [-1, -1], [-1, 0], [-1, 1],
+  [0, -1], [0, 1],
+  [1, -1], [1, 0], [1, 1]
+];
 
 function App() {
   const [diff, setDiff] = useState(1);
@@ -29,7 +35,6 @@ function App() {
   const [lost, setLost] = useState(false);
   const [isOstOn, setIsOstOn] = useState(false);
   const [isFlagSoundOn, setIsFlagSoundOn] = useState(true);
-  const [coordinates, setCoordinates] = useState([null, null]);
 
   useEffect(() => {
     console.log("GameGrid:", gameGrid);
@@ -47,7 +52,6 @@ function App() {
   const clickCell = (e, i, j) => {
     e.preventDefault();
     if (e.button === 0) {
-      setCoordinates([i, j]);
       ost.current.play();
       setIsOstOn(true);
       if (flagsGrid[i][j]) {
@@ -57,6 +61,7 @@ function App() {
       if (gameGrid[i][j] === -1) {
         setLost(true);
       }
+      updateSurroundings(i, j);
       if (firstClick) {
         let g = new Graph(i, j, rows, columns, gameGrid);
         const bfsResult = g.bfs(`${[i]}-${[j]}`)
@@ -96,32 +101,25 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    const [i, j] = coordinates;
-    console.log("Coordinates: ", i, j);
-    if (i !== null && i !== undefined && j !== null && j !== undefined) {
-      if (gameGrid[i][j] === 0) {
-        setclickedGrid(prevGrid => {
-          const newArr = deepCopy(prevGrid);
-          try {
-            newArr[i - 1][j - 1] = 1;
-            newArr[i - 1][j] = 1;
-            newArr[i - 1][j + 1] = 1;
-            newArr[i][j - 1] = 1;
-            newArr[i][j] = 1;
-            newArr[i][j + 1] = 1;
-            newArr[i + 1][j - 1] = 1;
-            newArr[i + 1][j] = 1;
-            newArr[i + 1][j + 1] = 1;
-          } catch (error) {
-            console.error(error);
+  const updateSurroundings = (i, j) => {
+    if (gameGrid[i][j] === 0) {
+      setclickedGrid(prevGrid => {
+        const newArr = deepCopy(prevGrid);
+        directions.forEach(val => {
+          const [x, y] = val;
+          const newX = i + x;
+          const newY = j + y;
+          if (newX >= 0 && newX < rows && newY >= 0 && newY < columns) {
+            newArr[newX][newY] = 1;
+            if (gameGrid[newX][newY] === 0 && prevGrid[newX][newY] !== 1) {
+              updateSurroundings(newX, newY);
+            }
           }
-          return newArr;
-        })
-      }
+        });
+        return newArr;
+      })
     }
-  }, [coordinates])
-
+  }
 
   const retryClick = () => {
     window.location.reload()
@@ -140,6 +138,19 @@ function App() {
     setIsFlagSoundOn(prev => !prev);
   }
 
+  const gameDisplay = gameGrid.map((row, i) => row.map((value, j) =>
+    <div className='cell' key={`${i}${j}`}>
+      {flagsGrid[i][j] ?
+        <button onMouseDown={(e) => clickCell(e, i, j)} onContextMenu={(e) => e.preventDefault()} className='flagButton'>
+          <img className='flagCell' src={flag} alt="flag icon" />
+        </button>
+        : !clickedGrid[i][j] ?
+          <button onMouseDown={(e) => clickCell(e, i, j)} onContextMenu={(e) => e.preventDefault()}></button>
+          : <span>{value === -1 ? <FaBomb /> : value === 0 ? null : value}</span>
+      }
+    </div>
+  ));
+
   return (
     <div className='gameContainer'>
       {lost &&
@@ -154,9 +165,9 @@ function App() {
       }
       <div className='diffContainer'>
         <label htmlFor='difficulty'>Difficulty: </label>
-        <select id='difficulty' onChange={changeDiff} name='difficulty'>
+        <select id='difficulty' onChange={changeDiff} name='difficulty' value={diff}>
           <option value="0" key="0">Easy</option>
-          <option value="1" key="1" selected>Medium</option>
+          <option value="1" key="1">Medium</option>
           <option value="2" key="2">Hard</option>
         </select>
         <p>Number of Bombs: <span className='bombsNumber'>{bombs}</span></p>
@@ -173,18 +184,7 @@ function App() {
       </div>
       <div className='mines container'>
         <div className={`grid ${writtenDiff}`}>
-          {gameGrid.map((row, i) => row.map((value, j) =>
-            <div className='cell' key={`${i}${j}`}>
-              {flagsGrid[i][j] ?
-                <button onMouseDown={(e) => clickCell(e, i, j)} onContextMenu={(e) => e.preventDefault()} className='flagButton'>
-                  <img className='flagCell' src={flag} alt="flag icon" />
-                </button>
-                : !clickedGrid[i][j] ?
-                  <button onMouseDown={(e) => clickCell(e, i, j)} onContextMenu={(e) => e.preventDefault()}></button>
-                  : <span>{value === -1 ? <FaBomb /> : value === 0 ? null : value}</span>
-              }
-            </div>
-          ))}
+          {gameDisplay}
         </div>
       </div>
     </div>

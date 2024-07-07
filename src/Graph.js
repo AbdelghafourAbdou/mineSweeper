@@ -10,196 +10,26 @@ class Graph {
     }
 
     createGraphRepresentation(i, j, rows, columns, grid) {
-        const topExists = (i - 1 >= 0);
-        const bottomExists = (i + 1 < rows);
-        const leftExists = (j - 1 >= 0);
-        const rightExists = (j + 1 < columns);
+        const directions = [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1], [0, 1],
+            [1, -1], [1, 0], [1, 1]
+        ];
         i = parseInt(i, 10);
         j = parseInt(j, 10);
 
-        try {
-            if (topExists && bottomExists && leftExists && rightExists) {
-                if (grid[i - 1][j - 1] !== 0 && grid[i - 1][j - 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j - 1]}`);
-                }
-                if (grid[i - 1][j] !== 0 && grid[i - 1][j] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j]}`);
-                }
-                if (grid[i - 1][j + 1] !== 0 && grid[i - 1][j + 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j + 1]}`);
-                }
-                if (grid[i][j - 1] !== 0 && grid[i][j - 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j - 1]}`);
-                }
-                if (grid[i][j + 1] !== 0 && grid[i][j + 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j + 1]}`);
-                }
-                if (grid[i + 1][j - 1] !== 0 && grid[i + 1][j - 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j - 1]}`);
-                }
-                if (grid[i + 1][j] !== 0 && grid[i + 1][j] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j]}`);
-                }
-                if (grid[i + 1][j + 1] !== 0 && grid[i + 1][j + 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j + 1]}`);
+        directions.forEach(val => {
+            const [x, y] = val;
+            const newX = i + x;
+            const newY = j + y;
+            if (newX >= 0 && newX < rows && newY >= 0 && newY < columns) {
+                if (grid[newX][newY] !== 0 && grid[newX][newY] !== -1) {
+                    const adjacentCoordinates = `${newX}-${newY}`;
+                    this.addVertex(adjacentCoordinates);
+                    this.addEdge(`${[i]}-${[j]}`, adjacentCoordinates);
                 }
             }
-            else if (topExists && leftExists && rightExists) {
-                if (grid[i - 1][j - 1] !== 0 && grid[i - 1][j - 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j - 1]}`);
-                }
-                if (grid[i - 1][j] !== 0 && grid[i - 1][j] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j]}`);
-                }
-                if (grid[i - 1][j + 1] !== 0 && grid[i - 1][j + 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j + 1]}`);
-                }
-                if (grid[i][j - 1] !== 0 && grid[i][j - 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j - 1]}`);
-                }
-                if (grid[i][j + 1] !== 0 && grid[i][j + 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j + 1]}`);
-                }
-            }
-            else if (topExists && bottomExists && rightExists) {
-                if (grid[i - 1][j] !== 0 && grid[i - 1][j] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j]}`);
-                }
-                if (grid[i - 1][j + 1] !== 0 && grid[i - 1][j + 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j + 1]}`);
-                }
-                if (grid[i][j + 1] !== 0 && grid[i][j + 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j + 1]}`);
-                }
-                if (grid[i + 1][j] !== 0 && grid[i + 1][j] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j]}`);
-                }
-                if (grid[i + 1][j + 1] !== 0 && grid[i + 1][j + 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j + 1]}`);
-                }
-            }
-            else if (topExists && bottomExists && leftExists) {
-                if (grid[i - 1][j - 1] !== 0 && grid[i - 1][j - 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j - 1]}`);
-                }
-                if (grid[i - 1][j] !== 0 && grid[i - 1][j] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j]}`);
-                }
-                if (grid[i][j - 1] !== 0 && grid[i][j - 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j - 1]}`);
-                }
-                if (grid[i + 1][j - 1] !== 0 && grid[i + 1][j - 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j - 1]}`);
-                }
-                if (grid[i + 1][j] !== 0 && grid[i + 1][j] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j]}`);
-                }
-            }
-            else if (bottomExists && leftExists && rightExists) {
-                if (grid[i][j - 1] !== 0 && grid[i][j - 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j - 1]}`);
-                }
-                if (grid[i][j + 1] !== 0 && grid[i][j + 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j + 1]}`);
-                }
-                if (grid[i + 1][j - 1] !== 0 && grid[i + 1][j - 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j - 1]}`);
-                }
-                if (grid[i + 1][j] !== 0 && grid[i + 1][j] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j]}`);
-                }
-                if (grid[i + 1][j + 1] !== 0 && grid[i + 1][j + 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j + 1]}`);
-                }
-            }
-            else if (bottomExists && rightExists) {
-                if (grid[i][j + 1] !== 0 && grid[i][j + 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j + 1]}`);
-                }
-                if (grid[i + 1][j] !== 0 && grid[i + 1][j] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j]}`);
-                }
-                if (grid[i + 1][j + 1] !== 0 && grid[i + 1][j + 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j + 1]}`);
-                }
-            }
-            else if (bottomExists && leftExists) {
-                if (grid[i][j - 1] !== 0 && grid[i][j - 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j - 1]}`);
-                }
-                if (grid[i + 1][j - 1] !== 0 && grid[i + 1][j - 1] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j - 1]}`);
-                }
-                if (grid[i + 1][j] !== 0 && grid[i + 1][j] !== -1) {
-                    this.addVertex(`${[i + 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i + 1]}-${[j]}`);
-                }
-            }
-            else if (topExists && rightExists) {
-                if (grid[i - 1][j] !== 0 && grid[i - 1][j] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j]}`);
-                }
-                if (grid[i - 1][j + 1] !== 0 && grid[i - 1][j + 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j + 1]}`);
-                }
-                if (grid[i][j + 1] !== 0 && grid[i][j + 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j + 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j + 1]}`);
-                }
-            }
-            else if (topExists && leftExists) {
-                if (grid[i - 1][j - 1] !== 0 && grid[i - 1][j - 1] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j - 1]}`);
-                }
-                if (grid[i - 1][j] !== 0 && grid[i - 1][j] !== -1) {
-                    this.addVertex(`${[i - 1]}-${[j]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i - 1]}-${[j]}`);
-                }
-                if (grid[i][j - 1] !== 0 && grid[i][j - 1] !== -1) {
-                    this.addVertex(`${[i]}-${[j - 1]}`);
-                    this.addEdge(`${[i]}-${[j]}`, `${[i]}-${[j - 1]}`);
-                }
-            }
-        } catch (error) {
-            console.error(error);
-            console.log("Data: I: ", i, "j: ", j, "value: ", grid[i][j]);
-        }
+        })
     }
 
     addVertex(vertex) {

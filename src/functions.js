@@ -1,6 +1,6 @@
 const directions = [
     [-1, -1], [-1, 0], [-1, 1],
-    [0, -1], [0, 1], 
+    [0, -1], [0, 1],
     [1, -1], [1, 0], [1, 1]
 ];
 
@@ -33,72 +33,14 @@ export const generateBomba = (diff) => {
                 continue;
             }
             let bombsAround = 0;
-            const topExists = (i - 1 >= 0);
-            const bottomExists = (i + 1 < rows);
-            const leftExists = (j - 1 >= 0);
-            const rightExists = (j + 1 < columns);
-            if (topExists && bottomExists && leftExists && rightExists) {
-                directions.forEach(val => {
-                    const [x, y] = val;
-                    bombsAround += newGrid[i + x][j + y] === -1 ? 1: 0;
-                })
-                // bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-                // bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-            }
-            else if (topExists && leftExists && rightExists) {
-                bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-            }
-            else if (topExists && bottomExists && rightExists) {
-                bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-            }
-            else if (topExists && bottomExists && leftExists) {
-                bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-            }
-            else if (bottomExists && leftExists && rightExists) {
-                bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-            }
-            else if (bottomExists && rightExists) {
-                bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-            }
-            else if (bottomExists && leftExists) {
-                bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-            }
-            else if (topExists && rightExists) {
-                bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-            }
-            else if (topExists && leftExists) {
-                bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-                bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-                bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-            }
+            directions.forEach(val => {
+                const [x, y] = val;
+                const newX = i + x;
+                const newY = j + y;
+                if (newX >= 0 && newX < rows && newY >= 0 && newY < columns) {
+                    bombsAround += newGrid[newX][newY] === -1 ? 1 : 0;
+                }
+            });
             newGrid[i][j] = bombsAround;
         }
     }
