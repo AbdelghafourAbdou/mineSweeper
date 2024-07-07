@@ -47,6 +47,7 @@ function App() {
     setDiff(newDiff);
     setGameGrid(generateBomba(newDiff));
     setclickedGrid(Array(rows).fill(0).map(() => Array(columns).fill(0)));
+    setFlagsGrid(Array(rows).fill(0).map(() => Array(columns).fill(0)));
   }
 
   const clickCell = (e, i, j) => {
