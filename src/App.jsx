@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FaBomb } from "react-icons/fa6";
 import Graph from './Graph';
+import { generateBomba, deepCopy } from './functions';
 import './App.css';
 const play = '/svg/play.svg';
 const pause = '/svg/pause.svg';
@@ -8,115 +9,6 @@ const flag = '/svg/flag.svg';
 const select = '/sounds/select.wav';
 const cloth = '/sounds/cloth.mp3';
 const music = '/music/piano.mp3';
-
-const generateBomba = (diff) => {
-  const bombs = diff == 0 ? 10 : diff == 1 ? 40 : 99;
-  const rows = diff == 0 ? 8 : diff == 1 ? 14 : 20;
-  const columns = diff == 0 ? 10 : diff == 1 ? 18 : 24;
-
-  const newGrid = Array(rows);
-  for (let i = 0; i < rows; i++) {
-    newGrid[i] = Array(columns);
-    for (let j = 0; j < columns; j++) {
-      newGrid[i][j] = 0;
-    }
-  }
-
-  for (let i = 0; i < bombs; i++) {
-    const randRow = Math.floor(Math.random() * rows);
-    const randCol = Math.floor(Math.random() * columns);
-    if (newGrid[randRow][randCol] === -1) {
-      i--;
-      continue;
-    }
-    newGrid[randRow][randCol] = -1;
-  }
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
-      if (newGrid[i][j] === -1) {
-        continue;
-      }
-      let bombsAround = 0;
-      const topExists = (i - 1 >= 0);
-      const bottomExists = (i + 1 < rows);
-      const leftExists = (j - 1 >= 0);
-      const rightExists = (j + 1 < columns);
-      if (topExists && bottomExists && leftExists && rightExists) {
-        bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-      }
-      else if (topExists && leftExists && rightExists) {
-        bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-      }
-      else if (topExists && bottomExists && rightExists) {
-        bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-      }
-      else if (topExists && bottomExists && leftExists) {
-        bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-      }
-      else if (bottomExists && leftExists && rightExists) {
-        bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-      }
-      else if (bottomExists && rightExists) {
-        bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j + 1] === -1 ? 1 : 0;
-      }
-      else if (bottomExists && leftExists) {
-        bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i + 1][j] === -1 ? 1 : 0;
-      }
-      else if (topExists && rightExists) {
-        bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j + 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j + 1] === -1 ? 1 : 0;
-      }
-      else if (topExists && leftExists) {
-        bombsAround += newGrid[i - 1][j - 1] === -1 ? 1 : 0;
-        bombsAround += newGrid[i - 1][j] === -1 ? 1 : 0;
-        bombsAround += newGrid[i][j - 1] === -1 ? 1 : 0;
-      }
-      newGrid[i][j] = bombsAround;
-    }
-  }
-  return newGrid;
-}
-
-const deepCopy = (arr) => {
-  let copy = [];
-  arr.forEach(elem => {
-    if (Array.isArray(elem)) {
-      copy.push(deepCopy(elem))
-    } else {
-      copy.push(elem)
-    }
-  })
-  return copy;
-}
 
 function App() {
   const [diff, setDiff] = useState(1);
@@ -137,6 +29,7 @@ function App() {
   const [lost, setLost] = useState(false);
   const [isOstOn, setIsOstOn] = useState(false);
   const [isFlagSoundOn, setIsFlagSoundOn] = useState(true);
+  const [coordinates, setCoordinates] = useState([null, null]);
 
   useEffect(() => {
     console.log("GameGrid:", gameGrid);
@@ -154,6 +47,7 @@ function App() {
   const clickCell = (e, i, j) => {
     e.preventDefault();
     if (e.button === 0) {
+      setCoordinates([i, j]);
       ost.current.play();
       setIsOstOn(true);
       if (flagsGrid[i][j]) {
@@ -201,6 +95,33 @@ function App() {
       }
     }
   }
+
+  useEffect(() => {
+    const [i, j] = coordinates;
+    console.log("Coordinates: ", i, j);
+    if (i !== null && i !== undefined && j !== null && j !== undefined) {
+      if (gameGrid[i][j] === 0) {
+        setclickedGrid(prevGrid => {
+          const newArr = deepCopy(prevGrid);
+          try {
+            newArr[i - 1][j - 1] = 1;
+            newArr[i - 1][j] = 1;
+            newArr[i - 1][j + 1] = 1;
+            newArr[i][j - 1] = 1;
+            newArr[i][j] = 1;
+            newArr[i][j + 1] = 1;
+            newArr[i + 1][j - 1] = 1;
+            newArr[i + 1][j] = 1;
+            newArr[i + 1][j + 1] = 1;
+          } catch (error) {
+            console.error(error);
+          }
+          return newArr;
+        })
+      }
+    }
+  }, [coordinates])
+
 
   const retryClick = () => {
     window.location.reload()
@@ -273,7 +194,6 @@ function App() {
 export default App
 // tasks to do: 
 // 1-if user first clicks and only blank square appears, when that happens the game should search for nearest squares with numbers and open them.
-
 // 2-after game starts, if user clicks on empty square, the game should open newarest square with numbers 
-// 3-add timer and flags number decreasing after each flag put.
+// 3-add timer and flags number decreasing after each flag put, and win screen.
 // 4-enhance adjacency detection and bfs.
