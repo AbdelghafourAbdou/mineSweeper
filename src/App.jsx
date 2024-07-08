@@ -21,7 +21,7 @@ function App() {
   const writtenDiff = diff == 0 ? 'easy' : diff == 1 ? 'mid' : 'hard';
   const rows = diff == 0 ? 8 : diff == 1 ? 14 : 20;
   const columns = diff == 0 ? 10 : diff == 1 ? 18 : 24;
-  const bombs = diff == 0 ? 10 : diff == 1 ? 40 : 99;
+  const [bombs, setBombs] = useState(diff == 0 ? 10 : diff == 1 ? 40 : 99)
   const ost = useRef(new Audio(music));
   ost.current.loop = true;
   const clickSound = new Audio(select);
@@ -45,6 +45,7 @@ function App() {
     const rows = newDiff === 0 ? 8 : newDiff === 1 ? 14 : 20;
     const columns = newDiff === 0 ? 10 : newDiff === 1 ? 18 : 24;
     setDiff(newDiff);
+    setBombs(newDiff == 0 ? 10 : newDiff == 1 ? 40 : 99);
     setGameGrid(generateBomba(newDiff));
     setclickedGrid(Array(rows).fill(0).map(() => Array(columns).fill(0)));
     setFlagsGrid(Array(rows).fill(0).map(() => Array(columns).fill(0)));
@@ -91,13 +92,15 @@ function App() {
           const newFlags = deepCopy(prevFlags);
           newFlags[i][j] = 1;
           return newFlags;
-        })
+        });
+        setBombs(prevBombs => --prevBombs);
       } else if (flagsGrid[i][j] === 1) {
         setFlagsGrid(prevFlags => {
           const newFlags = deepCopy(prevFlags);
           newFlags[i][j] = 0;
           return newFlags;
-        })
+        });
+        setBombs(prevBombs => ++prevBombs);
       }
     }
   }
@@ -194,7 +197,7 @@ function App() {
 
 export default App
 // tasks to do: 
-// 1-if user first clicks and only blank square appears, when that happens the game should search for nearest squares with numbers and open them.
-// 2-after game starts, if user clicks on empty square, the game should open newarest square with numbers 
-// 3-add timer and flags number decreasing after each flag put, and win screen.
+// 1-if user first clicks and only blank square appears, when that happens the game should search for nearest squares with numbers and open them: maybe done, to check.
+// 2-after game starts, if user clicks on empty square, the game should open newarest square with numbers: maybe done, to check.
+// 3-add timer and win screen.
 // 4-enhance adjacency detection and bfs.
