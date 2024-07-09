@@ -70,12 +70,41 @@ export const checkWin = (gameGrid, clickedGrid) => {
         value === 0 && unclickedCells.push(`${i} - ${j}`);
     }));
 
-    // console.log("Bombs Locations: ", bombsLocations);
-    // console.log("Unclicked Cells: ", unclickedCells);
     for (let i = 0; i < bombsLocations.length; i++) {
         if (bombsLocations[i] !== unclickedCells[i]) {
             return false;
         }
     }
     return true;
+}
+
+export const cellColor = (number) => {
+    let color;
+    switch (number) {
+        case 1:
+            color = "one";
+            break;
+        case 2:
+            color = "two";
+            break;
+        case 3:
+            color = "three";
+            break;
+        case 4:
+            color = "four";
+            break;
+        case 5:
+            color = "five";
+            break;
+        case 6:
+            color = "six";
+            break;
+        case 7:
+            color = "seven";
+            break;
+        default:
+            color = "other";
+            break;
+    }
+    return color;
 }

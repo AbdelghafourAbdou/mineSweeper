@@ -23,7 +23,7 @@ class Graph {
             const newX = i + x;
             const newY = j + y;
             if (newX >= 0 && newX < rows && newY >= 0 && newY < columns) {
-                if (grid[newX][newY] !== 0 && grid[newX][newY] !== -1) {
+                if (grid[newX][newY] !== -1) {
                     const adjacentCoordinates = `${newX}-${newY}`;
                     this.addVertex(adjacentCoordinates);
                     this.addEdge(`${[i]}-${[j]}`, adjacentCoordinates);

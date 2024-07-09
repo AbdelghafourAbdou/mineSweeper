@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FaBomb } from "react-icons/fa6";
 import Graph from './Graph';
-import { generateBomba, deepCopy, checkWin } from './functions';
+import { generateBomba, deepCopy, checkWin, cellColor } from './functions';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import Confetti from 'react-confetti';
 import './App.css';
@@ -12,6 +12,7 @@ const flag = '/svg/flag.svg';
 const select = '/sounds/select.wav';
 const cloth = '/sounds/cloth.mp3';
 const music = '/music/piano.mp3';
+//const naruto = '/music/naruto.mp3';
 const directions = [
   [-1, -1], [-1, 0], [-1, 1],
   [0, -1], [0, 1],
@@ -34,6 +35,7 @@ function App() {
   const [flagsGrid, setFlagsGrid] = useState(Array.from({ length: rows }, () => Array(columns).fill(0)));
 
   const [firstClick, setFirstClick] = useState(true);
+  const [musicFirstClick, setMusicFirstClick] = useState(true);
   const [lost, setLost] = useState(false);
   const [win, setWin] = useState(false);
   const [isOstOn, setIsOstOn] = useState(false);
@@ -41,7 +43,7 @@ function App() {
   const gameStartTime = useRef(null);
   const [time, setTime] = useState(['00', '00']);
 
-  const { width, height } = useWindowSize()
+  const { width, height } = useWindowSize();
 
   useEffect(() => {
     console.log("GameGrid:", gameGrid);
@@ -66,27 +68,30 @@ function App() {
       if (flagsGrid[i][j]) {
         return;
       }
-      ost.current.play();
-      setIsOstOn(true);
       clickSound.play();
       if (gameGrid[i][j] === -1) {
         setLost(true);
       }
       updateSurroundings(i, j);
+      if (musicFirstClick) {
+        ost.current.play();
+        setIsOstOn(true);
+        setMusicFirstClick(false);
+      }
       if (firstClick) {
         gameStartTime.current = Date.now();
         let g = new Graph(i, j, rows, columns, gameGrid);
         const bfsResult = g.bfs(`${[i]}-${[j]}`);
-        //g.showAdjacencyList()
-        //console.log("BFS: ", bfsResult);
+        console.log("BFS: ", bfsResult);
         bfsResult.map(val => {
           const [x, y] = val.split('-');
+          updateSurroundings(x, y);
           setclickedGrid(prevGrid => {
             const newArr = deepCopy(prevGrid);
             newArr[x][y] = 1;
             return newArr;
-          })
-        })
+          });
+        });
         setFirstClick(false);
       } else {
         setclickedGrid(prevGrid => {
@@ -134,6 +139,8 @@ function App() {
 
 
   const updateSurroundings = (i, j) => {
+    i = parseInt(i, 10);
+    j = parseInt(j, 10);
     if (gameGrid[i][j] === 0) {
       setclickedGrid(prevGrid => {
         const newArr = deepCopy(prevGrid);
@@ -178,7 +185,7 @@ function App() {
         </button>
         : !clickedGrid[i][j] ?
           <button onMouseDown={(e) => clickCell(e, i, j)} onContextMenu={(e) => e.preventDefault()}></button>
-          : <span>{value === -1 ? <FaBomb /> : value === 0 ? null : value}</span>
+          : value === -1 ? <FaBomb /> : value === 0 ? null : <span className={cellColor(value)}>{value}</span>
       }
     </div>
   ));
@@ -242,3 +249,6 @@ export default App
 // 2-after game starts, if user clicks on empty square, the game should open newarest square with numbers: maybe done, to check.
 // 3-enhance win screen and remove overflow on x and y, also add this game's time and best time.
 // 4-enhance adjacency detection and bfs.
+// 5-keep ost settings between games.
+// 6-use a fringe to enhance performance of check surroudings.
+// 7-each diff has a bfs limit and you get to choose dificulty on lose and win screen.

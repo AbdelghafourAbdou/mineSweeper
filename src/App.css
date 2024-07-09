@@ -62,8 +62,7 @@
 }
 .gameOver {
   z-index: 99;
-  width: 10%;
-  height: 10%;
+  min-width: 15%;
   position: absolute;
   display: flex;
   align-items: center;
@@ -126,4 +125,29 @@
   padding: 0;
   margin: 5px;
   font-weight: bold;
+}
+
+.one {
+  color: #58acff;
+}
+.two {
+  color: #bcffa3;
+}
+.three {
+  color: #ff4f4f;
+}
+.four {
+  color: #d982ff;
+}
+.five {
+  color: #ff9100;
+}
+.six {
+  color: rgb(230, 255, 90);
+}
+.seven {
+  color: rgb(255, 66, 208);
+}
+.other {
+  color: rgba(255, 255, 255, 0.87);
 }
