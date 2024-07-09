@@ -252,3 +252,4 @@ export default App
 // 5-keep ost settings between games.
 // 6-use a fringe to enhance performance of check surroudings.
 // 7-each diff has a bfs limit and you get to choose dificulty on lose and win screen.
+// 8-allow user to choose track to play.
