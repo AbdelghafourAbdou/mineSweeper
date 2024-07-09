@@ -121,3 +121,9 @@
   padding: 2px;
   min-width: 1.5em;
 }
+
+.retry p {
+  padding: 0;
+  margin: 5px;
+  font-weight: bold;
+}

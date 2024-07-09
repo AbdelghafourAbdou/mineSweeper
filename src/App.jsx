@@ -2,7 +2,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { FaBomb } from "react-icons/fa6";
 import Graph from './Graph';
-import { generateBomba, deepCopy } from './functions';
+import { generateBomba, deepCopy, checkWin } from './functions';
+import useWindowSize from 'react-use/lib/useWindowSize';
+import Confetti from 'react-confetti';
 import './App.css';
 const play = '/svg/play.svg';
 const pause = '/svg/pause.svg';
@@ -33,10 +35,13 @@ function App() {
 
   const [firstClick, setFirstClick] = useState(true);
   const [lost, setLost] = useState(false);
+  const [win, setWin] = useState(false);
   const [isOstOn, setIsOstOn] = useState(false);
   const [isFlagSoundOn, setIsFlagSoundOn] = useState(true);
   const gameStartTime = useRef(null);
   const [time, setTime] = useState(['00', '00']);
+
+  const { width, height } = useWindowSize()
 
   useEffect(() => {
     console.log("GameGrid:", gameGrid);
@@ -48,6 +53,8 @@ function App() {
     const columns = newDiff === 0 ? 10 : newDiff === 1 ? 18 : 24;
     setDiff(newDiff);
     setBombs(newDiff == 0 ? 10 : newDiff == 1 ? 40 : 99);
+    setFirstClick(true);
+    setTime(['00', '00']);
     setGameGrid(generateBomba(newDiff));
     setclickedGrid(Array(rows).fill(0).map(() => Array(columns).fill(0)));
     setFlagsGrid(Array(rows).fill(0).map(() => Array(columns).fill(0)));
@@ -86,7 +93,7 @@ function App() {
           const newArr = deepCopy(prevGrid);
           newArr[i][j] = 1;
           return newArr;
-        })
+        });
       }
     } else if (e.button === 2) {
       isFlagSoundOn && clothSound.play();
@@ -110,7 +117,7 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!firstClick) {
+      if (!firstClick && !lost && !win) {
         const elapsedTime = Date.now() - gameStartTime.current;
         const seconds = String(Math.floor((elapsedTime / 1000) % 60)).padStart(2, '0');
         const minutes = String(Math.floor(elapsedTime / 60000)).padStart(2, '0');
@@ -119,7 +126,12 @@ function App() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [firstClick]);
+  }, [firstClick, lost, win]);
+
+  useEffect(() => {
+    checkWin(gameGrid, clickedGrid) && setWin(true);
+  }, [gameGrid, clickedGrid]);
+
 
   const updateSurroundings = (i, j) => {
     if (gameGrid[i][j] === 0) {
@@ -183,6 +195,18 @@ function App() {
           </div>
         </>
       }
+      {win &&
+        <>
+          <Confetti height={height} width={width} />
+          <div className='clickStopper'></div>
+          <div className='gameOver'>
+            <button className='retry' onClick={retryClick}>
+              <p>Congratulations!</p>
+              <img src={play} alt="play button" width="25px" height="25px" className='coloredPlay' /> <span className='retryText'>Play Again?</span>
+            </button>
+          </div>
+        </>
+      }
       <div className='diffContainer'>
         <label htmlFor='difficulty'>Difficulty: </label>
         <select id='difficulty' onChange={changeDiff} name='difficulty' value={diff}>
@@ -216,5 +240,5 @@ export default App
 // tasks to do: 
 // 1-if user first clicks and only blank square appears, when that happens the game should search for nearest squares with numbers and open them: maybe done, to check.
 // 2-after game starts, if user clicks on empty square, the game should open newarest square with numbers: maybe done, to check.
-// 3-add win screen.
+// 3-enhance win screen and remove overflow on x and y, also add this game's time and best time.
 // 4-enhance adjacency detection and bfs.

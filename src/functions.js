@@ -58,3 +58,24 @@ export const deepCopy = (arr) => {
     })
     return copy;
 }
+
+export const checkWin = (gameGrid, clickedGrid) => {
+    const bombsLocations = [];
+    gameGrid.forEach((row, i) => row.forEach((value, j) => {
+        value === -1 && bombsLocations.push(`${i} - ${j}`);
+    }));
+
+    const unclickedCells = [];
+    clickedGrid.forEach((row, i) => row.forEach((value, j) => {
+        value === 0 && unclickedCells.push(`${i} - ${j}`);
+    }));
+
+    // console.log("Bombs Locations: ", bombsLocations);
+    // console.log("Unclicked Cells: ", unclickedCells);
+    for (let i = 0; i < bombsLocations.length; i++) {
+        if (bombsLocations[i] !== unclickedCells[i]) {
+            return false;
+        }
+    }
+    return true;
+}
