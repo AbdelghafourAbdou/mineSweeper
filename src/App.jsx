@@ -35,6 +35,8 @@ function App() {
   const [lost, setLost] = useState(false);
   const [isOstOn, setIsOstOn] = useState(false);
   const [isFlagSoundOn, setIsFlagSoundOn] = useState(true);
+  const gameStartTime = useRef(null);
+  const [time, setTime] = useState(['00', '00']);
 
   useEffect(() => {
     console.log("GameGrid:", gameGrid);
@@ -54,19 +56,20 @@ function App() {
   const clickCell = (e, i, j) => {
     e.preventDefault();
     if (e.button === 0) {
-      ost.current.play();
-      setIsOstOn(true);
       if (flagsGrid[i][j]) {
         return;
       }
+      ost.current.play();
+      setIsOstOn(true);
       clickSound.play();
       if (gameGrid[i][j] === -1) {
         setLost(true);
       }
       updateSurroundings(i, j);
       if (firstClick) {
+        gameStartTime.current = Date.now();
         let g = new Graph(i, j, rows, columns, gameGrid);
-        const bfsResult = g.bfs(`${[i]}-${[j]}`)
+        const bfsResult = g.bfs(`${[i]}-${[j]}`);
         //g.showAdjacencyList()
         //console.log("BFS: ", bfsResult);
         bfsResult.map(val => {
@@ -104,6 +107,19 @@ function App() {
       }
     }
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!firstClick) {
+        const elapsedTime = Date.now() - gameStartTime.current;
+        const seconds = String(Math.floor((elapsedTime / 1000) % 60)).padStart(2, '0');
+        const minutes = String(Math.floor(elapsedTime / 60000)).padStart(2, '0');
+        setTime([minutes, seconds]);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [firstClick]);
 
   const updateSurroundings = (i, j) => {
     if (gameGrid[i][j] === 0) {
@@ -185,6 +201,7 @@ function App() {
             <img className="ostControl" src={isFlagSoundOn ? pause : play} alt="pause/play icons" />
           </button>
         </p>
+        <p>Time: <span className='timeControl'>{time[0]}</span>:<span className='timeControl'>{time[1]}</span></p>
       </div>
       <div className='mines container'>
         <div className={`grid ${writtenDiff}`}>
@@ -199,5 +216,5 @@ export default App
 // tasks to do: 
 // 1-if user first clicks and only blank square appears, when that happens the game should search for nearest squares with numbers and open them: maybe done, to check.
 // 2-after game starts, if user clicks on empty square, the game should open newarest square with numbers: maybe done, to check.
-// 3-add timer and win screen.
+// 3-add win screen.
 // 4-enhance adjacency detection and bfs.

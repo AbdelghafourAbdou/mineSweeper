@@ -114,6 +114,10 @@
   width: 1.5em;
   height: 1.5em;
   filter: invert(58%) sepia(96%) saturate(4471%) hue-rotate(165deg) brightness(100%) contrast(101%);
-  position: relative;
-  top: 0.15em;
+}
+.timeControl {
+  display: inline-block;
+  color: #00a4d7;
+  padding: 2px;
+  min-width: 1.5em;
 }
